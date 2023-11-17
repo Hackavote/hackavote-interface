@@ -1,5 +1,5 @@
-import {Address, Chain} from "wagmi";
+import {Address, Chain} from "viem";
 
 export type AddressMap = {
-  [key: Chain['id']]: Address;
-};
+  [key: Chain['id']]: Address
+}
