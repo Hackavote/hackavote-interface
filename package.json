@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@nucypher/taco": "^0.1.0-rc.6",
     "@rainbow-me/rainbowkit": "1.0.11",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
