@@ -19,7 +19,7 @@ export default function useHackavoteProject(projectId: string | undefined) {
       submissionInfoUrl: projectData[2],
       socialMediaUrl: projectData[3]
     }
-  }, [projectData]);
+  }, [projectId, projectData]);
   return {
     project
   }

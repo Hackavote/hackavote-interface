@@ -1,4 +1,4 @@
-import './index.css';
+import 'index.scss';
 import '@rainbow-me/rainbowkit/styles.css';
 
 import {darkTheme, getDefaultWallets, RainbowKitProvider} from '@rainbow-me/rainbowkit';
