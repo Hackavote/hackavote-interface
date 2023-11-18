@@ -5,6 +5,7 @@ import {AddressZero} from "constants/index";
 import {copyToClipboard} from "utils/copyToClipboard";
 import {Dispatch, SetStateAction, useState} from 'react';
 import Slider from 'react-input-slider';
+import useProjectDetails from "hooks/useProjectDetails";
 
 type RatingSliderParams = {
   setName: string,
@@ -65,7 +66,7 @@ const RatingSlider = ({
         setIsChecked(!isChecked);
       }}
     />
-    <label className="pl-1.5" htmlFor={`${setName}-no-idea`}>
+    <label className="pl-1.5 whitespace-nowrap" htmlFor={`${setName}-no-idea`}>
       No idea
     </label>
   </div>
@@ -103,11 +104,14 @@ export function ProjectRatingForm() {
   }));
 
   return (
-    <form className="p-5 flex flex-col w-full justify-center items-center">
-      {ratings.map((rating) => <RatingSlider {...rating} />)}
-      <button className="btn-primary mt-4" type="submit">
-        Submit
-      </button>
+    <form className="w-full lg:w-1/2 p-2 pb-5">
+      <h3 className="text-2xl font-bold pb-2 text-center">Your Vote</h3>
+      <div className="flex flex-col w-full justify-center items-center">
+        {ratings.map((rating) => <RatingSlider {...rating} />)}
+        <button className="btn-primary mt-4" type="submit">
+          Submit
+        </button>
+      </div>
     </form>
   );
 }
@@ -115,43 +119,85 @@ export function ProjectRatingForm() {
 const Project = () => {
   const {projectId} = useParams()
   const {project} = useHackavoteProject(projectId)
-
-  return project ? (
+  const {projectInfo} = useProjectDetails(project?.submissionInfoUrl)
+  return (project && projectInfo) ? (
     <div className="p-10">
-      <div className="flex flex-wrap flex-col-reverse md:flex-row justify-between">
-        <div className="min-w-[400px] w-full md:w-1/3 p-5 flex flex-wrap">
-          <div className="w-full">
-            <p className="text-center font-bold text-3xl">Project Title</p>
-            <p className="py-2">
-              A short description about the project
-            </p>
-          </div>
-          <div className="project-meta">
-            <p>Eth Global submission</p>
-            <a href={project.submissionInfoUrl}
-               className="project-meta-value">{project.submissionInfoUrl}</a>
-          </div>
-          <div className="project-meta">
-            <p>Contact and Social Media</p>
-            {project.socialMediaUrl ? <a className="project-meta-value">{project.socialMediaUrl}</a> : <p
-              className="project-meta-value">Not provided yet</p>}
-          </div>
-          <div className="project-meta">
-            <p>Donation Address</p>
-            <p
-              onClick={() => {
-                if (project && project.donationAddress !== AddressZero) {
-                  copyToClipboard(project.donationAddress)
-                  alert('Copied!')
-                }
-              }}
-              className={`project-meta-value ${project.donationAddress !== AddressZero ? 'cursor-pointer' : ''}`}>{project.donationAddress === AddressZero ? 'Not provided yet' : project.donationAddress}</p>
-          </div>
-        </div>
-        <img alt="project" className="w-auto h-96"
-             src='/img/project-image-placeholder.png'/>
+      <div className="w-full">
+        <p className="text-center font-bold text-3xl">{projectInfo.title || 'Unknown Project'}</p>
+        <p className="py-2 text-center">
+          {projectInfo.shortDescription}
+        </p>
       </div>
-      <ProjectRatingForm/>
+      <div className="flex justify-around flex-wrap">
+        <div className="project-meta">
+          <p className="project-meta-title">Eth Global submission</p>
+          <a href={project.submissionInfoUrl}
+             className="project-meta-value">{project.submissionInfoUrl}</a>
+        </div>
+        <div className="project-meta">
+          <p className="project-meta-title">Source Code</p>
+          <a href={projectInfo.sourceCode}
+             className="project-meta-value">{projectInfo.sourceCode}</a>
+        </div>
+        {projectInfo.liveDemo && <div className="project-meta">
+            <p className="project-meta-title">Live Demo</p>
+            <a href={projectInfo.liveDemo}
+               className="project-meta-value">{projectInfo.liveDemo}</a>
+        </div>}
+        <div className="project-meta">
+          <p className="project-meta-title">Contact and Social Media</p>
+          {project.socialMediaUrl ? <a className="project-meta-value">{project.socialMediaUrl}</a> : <p
+            className="project-meta-value">Not provided yet</p>}
+        </div>
+        <div className="project-meta">
+          <p className="project-meta-title">Donation Address</p>
+          <p
+            onClick={() => {
+              if (project && project.donationAddress !== AddressZero) {
+                copyToClipboard(project.donationAddress)
+                alert('Copied!')
+              }
+            }}
+            className={`project-meta-value ${project.donationAddress !== AddressZero ? 'cursor-pointer' : ''}`}>{project.donationAddress === AddressZero ? 'Not provided yet' : project.donationAddress}</p>
+        </div>
+      </div>
+      <div className="flex flex-wrap">
+        <div className="w-full lg:w-1/2 p-2 pb-5 text-center">
+          <h3 className="text-2xl font-bold pb-2">Project Description</h3>
+          <p className="leading-normal">
+            {projectInfo.description}
+          </p>
+        </div>
+        <div className="w-full lg:w-1/2 p-2 pb-5">
+          <h3 className="text-2xl font-bold pb-2 text-center">How it's made</h3>
+          <p className="leading-normal">
+            {projectInfo.howItsMade}
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-wrap">
+        <div className="w-full lg:w-1/2 p-2 pb-5">
+          <h3 className="text-2xl font-bold pb-2 text-center">Voting Guide</h3>
+          <p className="leading-normal">
+            - If you need gas, visit <a className="link" href="https://www.gnosisfaucet.com/" target="_blank"
+                                        rel="noreferrer">gnosis faucet.</a><br/>
+            - You can follow the
+            ETHGlobal&apos;s <a className="link"
+                                target="_blank"
+                                href="https://ethglobal.com/events/istanbul/info/details#judging-criteria"
+                                rel="noreferrer">judgement
+            criteria</a> to know about the voting parameters.<br/>
+            - <span className="font-bold text-red-700">IMPORTANT:</span> if possible, please use the same wallet that
+            you&apos;re going to
+            receive the
+            Hackathon&apos;s POAP on, so your vote can be easily verified. Otherwise, you should sign your ratings with
+            that wallet address later<br/>
+            - You can rate different aspects of the project from 0 to 100. If you don&apos;t want to rate on a category,
+            press "No idea".
+          </p>
+        </div>
+        <ProjectRatingForm/>
+      </div>
     </div>
   ) : <Spinner/>;
 };

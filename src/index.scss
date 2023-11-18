@@ -8,12 +8,20 @@ body {
   @apply font-sans bg-background-color text-font-color;
 }
 
+.link {
+  @apply text-blue-500 underline
+}
+
 .project-meta {
-  @apply m-1
+  @apply m-4 w-[320px] bg-gray-600 shadow rounded-xl p-4;
 }
 
 .project-meta-value {
-  @apply text-sm text-gray-700 font-mono bg-gray-200 px-3 py-2 rounded-lg inline-block w-full truncate
+  @apply text-sm text-gray-800 font-medium bg-gray-300 px-4 py-3 rounded-lg inline-block truncate w-full my-2;
+}
+
+.project-meta-title {
+  @apply text-lg font-bold text-white;
 }
 
 .btn-primary {
