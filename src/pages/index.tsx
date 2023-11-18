@@ -41,17 +41,13 @@ function Home() {
   }
 
   const runExample = async () => {
-    if (!window.ethereum) {
-      console.error('You need to connect to your wallet first');
-    }
-
     await initialize();
-    const ritualId = 1;
-    const domain = domains.MAINNET;
+    const ritualId = 5;
+    const domain = domains.TESTNET;
+    const encryptorPrivateKey = '0x900edb9e8214b2353f82aa195e915128f419a92cfb8bbc0f4784f10ef4112b86';
+    const encryptorSigner = new ethers.Wallet(encryptorPrivateKey);
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum!, 'any');
-    await provider.send('eth_requestAccounts', []);
-    const signer = provider.getSigner();
+    const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai-bor.publicnode.com");
 
     console.log('Encrypting message...');
     const hasPositiveBalance = new conditions.TimeCondition({
@@ -61,7 +57,7 @@ function Home() {
         value: 100,
       },
       method: 'blocktime',
-      chain: 1,
+      chain: 80001,
     });
     console.log('Encrypting message...2');
     const messageKit = await encrypt(
@@ -70,7 +66,7 @@ function Home() {
       message,
       hasPositiveBalance,
       ritualId,
-      signer,
+      encryptorSigner,
     );
 
     console.log('Decrypting message...');
@@ -78,8 +74,7 @@ function Home() {
       provider,
       domain,
       messageKit,
-      getPorterUri(domain),
-      signer,
+      getPorterUri(domain)
     );
 
     setDecryptedMessage(fromBytes(decryptedMessage));
