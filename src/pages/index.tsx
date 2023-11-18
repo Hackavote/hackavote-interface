@@ -1,56 +1,63 @@
-import {conditions, decrypt, domains, encrypt, fromBytes, getPorterUri, initialize,} from '@nucypher/taco';
+import {
+  conditions,
+  decrypt,
+  domains,
+  encrypt,
+  fromBytes,
+  getPorterUri,
+  initialize,
+  ThresholdMessageKit,
+  toHexString,
+} from '@nucypher/taco';
 import {ethers} from 'ethers';
 import {useEffect, useState} from 'react';
-
-declare const window: any;
+import {fromHexString} from "@nucypher/shared";
 
 const message = 'this is a secret';
 
 function Home() {
   const [isInit, setIsInit] = useState(false);
-  const [provider, setProvider] = useState<
-    ethers.providers.Web3Provider | undefined
-  >();
   const [decryptedMessage, setDecryptedMessage] = useState<string | undefined>(
     '',
   );
 
   const initNucypher = async () => {
+    console.log('init start')
     await initialize();
+    console.log('init end')
     setIsInit(true);
-  };
-
-  const loadWeb3Provider = async () => {
-    if (!window.ethereum) {
-      console.error('You need to connect to your wallet first');
-    }
-    const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
-
-
-    await provider.send('eth_requestAccounts', []);
-    setProvider(provider);
   };
 
   useEffect(() => {
     initNucypher();
-    loadWeb3Provider();
   }, []);
 
-  if (!isInit || !provider) {
-    return <div>Loading...</div>;
+
+  const [encryptedText, setEncryptedText] = useState<string | null>(null)
+
+  const ritualId = 5;
+  const domain = domains.TESTNET;
+  const encryptorPrivateKey = '0x900edb9e8214b2353f82aa195e915128f419a92cfb8bbc0f4784f10ef4112b86';
+  const encryptorSigner = new ethers.Wallet(encryptorPrivateKey);
+  const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai-bor.publicnode.com");
+
+
+  async function decryptData(encryptedTextParam: string) {
+    if (!isInit) return;
+    const messageKit = ThresholdMessageKit.fromBytes(fromHexString(encryptedTextParam));
+    console.log('Decrypting message...');
+    const decryptedMessage = await decrypt(
+      provider,
+      domain,
+      messageKit,
+      getPorterUri(domain)
+    );
+    setDecryptedMessage(fromBytes(decryptedMessage));
   }
 
-  const runExample = async () => {
-    await initialize();
-    const ritualId = 5;
-    const domain = domains.TESTNET;
-    const encryptorPrivateKey = '0x900edb9e8214b2353f82aa195e915128f419a92cfb8bbc0f4784f10ef4112b86';
-    const encryptorSigner = new ethers.Wallet(encryptorPrivateKey);
-
-    const provider = new ethers.providers.JsonRpcProvider("https://polygon-mumbai-bor.publicnode.com");
-
+  async function encryptData() {
     console.log('Encrypting message...');
-    const hasPositiveBalance = new conditions.TimeCondition({
+    const timeCondition = new conditions.TimeCondition({
       conditionType: 'time',
       returnValueTest: {
         comparator: '>',
@@ -59,30 +66,33 @@ function Home() {
       method: 'blocktime',
       chain: 80001,
     });
-    console.log('Encrypting message...2');
-    const messageKit = await encrypt(
+    return encrypt(
       provider,
       domain,
       message,
-      hasPositiveBalance,
+      timeCondition,
       ritualId,
       encryptorSigner,
     );
+  }
 
-    console.log('Decrypting message...');
-    const decryptedMessage = await decrypt(
-      provider,
-      domain,
-      messageKit,
-      getPorterUri(domain)
-    );
-
-    setDecryptedMessage(fromBytes(decryptedMessage));
+  const runExample = async () => {
+    if (!isInit) return
+    setEncryptedText(null)
+    setDecryptedMessage('')
+    const messageKit = await encryptData();
+    const encryptedText = toHexString(messageKit.toBytes())
+    setEncryptedText(encryptedText)
+    await decryptData(encryptedText);
   };
 
+  if (!isInit || !provider) {
+    return <div>Loading...</div>;
+  }
   return (
     <div>
       <h1>Secret message: {message}</h1>
+      {encryptedText && <h1>Encrypted text: {encryptedText}</h1>}
       {decryptedMessage && <h1>Decrypted message: {decryptedMessage}</h1>}
       <button onClick={runExample}>Run example</button>
     </div>
