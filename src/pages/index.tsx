@@ -1,13 +1,22 @@
-import {ConnectButton} from "@rainbow-me/rainbowkit";
 import useHackavoteProjects from "hooks/useHackavoteProjects";
+import {HackathonProject} from "types";
+import {Link} from "react-router-dom";
 
+const ProjectCard = ({project}: {
+  project: HackathonProject
+}) => {
+  return (
+    <Link to={'/project/' + project.index}>
+      {project.submissionInfoUrl}
+    </Link>
+  )
+}
 
 const Home = () => {
   const {projects} = useHackavoteProjects()
   return (
     <div>
-      <ConnectButton/>
-      {JSON.stringify(projects)}
+      {projects?.map((project) => <ProjectCard project={project} key={project.index}/>)}
     </div>
   );
 };

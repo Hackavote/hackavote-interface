@@ -16,17 +16,17 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "index",
+        "name": "projectId",
         "type": "uint256"
       },
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "newMetaDataUri",
-        "type": "string"
+        "internalType": "address",
+        "name": "newDonationAddress",
+        "type": "address"
       }
     ],
-    "name": "MetaDataUriChanged",
+    "name": "DonationAddressChanged",
     "type": "event"
   },
   {
@@ -37,16 +37,109 @@
         "internalType": "address",
         "name": "author",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "metaDataUri",
-        "type": "string"
       }
     ],
     "name": "ProjectSubmitted",
     "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "projectId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      }
+    ],
+    "name": "ProjectTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "projectId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newSocialMediaUrl",
+        "type": "string"
+      }
+    ],
+    "name": "SocialMediaUrlChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newSubmissionInfoUrl",
+        "type": "string"
+      }
+    ],
+    "name": "SubmissionInfoUrlChanged",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_projectId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_newDonationAddress",
+        "type": "address"
+      }
+    ],
+    "name": "changeDonationAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_projectId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_newSocialMediaUrl",
+        "type": "string"
+      }
+    ],
+    "name": "changeSocialMediaUrl",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
     "inputs": [
@@ -57,11 +150,11 @@
       },
       {
         "internalType": "string",
-        "name": "_newMetaDataUri",
+        "name": "_newSubmissionInfoUrl",
         "type": "string"
       }
     ],
-    "name": "changeMetaDataUri",
+    "name": "changeSubmissionInfoUrl",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -108,8 +201,18 @@
         "type": "address"
       },
       {
+        "internalType": "address",
+        "name": "donationAddress",
+        "type": "address"
+      },
+      {
         "internalType": "string",
-        "name": "metaDataUri",
+        "name": "submissionInfoUrl",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "socialMediaUrl",
         "type": "string"
       }
     ],
@@ -120,11 +223,39 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "_metaDataUri",
+        "name": "_submissionInfoUrl",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "_donationAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_socialMediaUrl",
         "type": "string"
       }
     ],
     "name": "submitProject",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_projectId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_newAuthor",
+        "type": "address"
+      }
+    ],
+    "name": "transferProject",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
