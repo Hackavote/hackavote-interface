@@ -13,6 +13,9 @@ module.exports = {
                 'background-color': '#191919',
                 'font-color': '#EAEAEA',
             },
+            flexGrow: {
+                'min': '1 1 auto'
+            }
         },
     },
 }

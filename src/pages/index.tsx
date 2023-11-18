@@ -11,8 +11,8 @@ const ProjectCard = ({project}: {
         <img className="rounded-t-xl h-3/4 w-full object-cover" alt="project"
              src='/img/project-image-placeholder.png'/>
         <div className="text-font-color my-2">A short description about the project</div>
-        <button className="bg-blue-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-          Vote
+        <button className="btn-primary">
+          View Details
         </button>
       </Link>
     </div>
