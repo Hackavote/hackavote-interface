@@ -7,3 +7,7 @@
 body {
   @apply font-sans bg-background-color text-font-color;
 }
+
+.project-meta-value {
+  @apply text-sm text-gray-700 font-mono bg-gray-200 px-3 py-2 rounded-lg inline-block w-full truncate
+}
