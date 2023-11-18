@@ -6,6 +6,8 @@ import {copyToClipboard} from "utils/copyToClipboard";
 import {Dispatch, SetStateAction, useState} from 'react';
 import Slider from 'react-input-slider';
 import useProjectDetails from "hooks/useProjectDetails";
+import {useAccount} from "wagmi";
+import {ConnectButton} from "@rainbow-me/rainbowkit";
 
 type RatingSliderParams = {
   setName: string,
@@ -103,14 +105,16 @@ export function ProjectRatingForm() {
     setIsChecked: rating[4],
   }));
 
+  const {address} = useAccount()
+
   return (
-    <form className="w-full lg:w-1/2 p-2 pb-5">
-      <h3 className="text-2xl font-bold pb-2 text-center">Your Vote</h3>
+    <form className="project-page-section">
+      <h3 className="project-page-section-title">Your Vote</h3>
       <div className="flex flex-col w-full justify-center items-center">
         {ratings.map((rating) => <RatingSlider {...rating} />)}
-        <button className="btn-primary mt-4" type="submit">
+        {address ? <button className="btn-primary mt-4" type="submit">
           Submit
-        </button>
+        </button> : <ConnectButton/>}
       </div>
     </form>
   );
@@ -162,22 +166,22 @@ const Project = () => {
         </div>
       </div>
       <div className="flex flex-wrap">
-        <div className="w-full lg:w-1/2 p-2 pb-5 text-center">
-          <h3 className="text-2xl font-bold pb-2">Project Description</h3>
+        <div className="project-page-section">
+          <h3 className="project-page-section-title">Project Description</h3>
           <p className="leading-normal">
             {projectInfo.description}
           </p>
         </div>
-        <div className="w-full lg:w-1/2 p-2 pb-5">
-          <h3 className="text-2xl font-bold pb-2 text-center">How it's made</h3>
+        <div className="project-page-section">
+          <h3 className="project-page-section-title">How it's made</h3>
           <p className="leading-normal">
             {projectInfo.howItsMade}
           </p>
         </div>
       </div>
       <div className="flex flex-wrap">
-        <div className="w-full lg:w-1/2 p-2 pb-5">
-          <h3 className="text-2xl font-bold pb-2 text-center">Voting Guide</h3>
+        <div className="project-page-section">
+          <h3 className="project-page-section-title">Voting Guide</h3>
           <p className="leading-normal">
             - If you need gas, visit <a className="link" href="https://www.gnosisfaucet.com/" target="_blank"
                                         rel="noreferrer">gnosis faucet.</a><br/>
@@ -193,7 +197,11 @@ const Project = () => {
             Hackathon&apos;s POAP on, so your vote can be easily verified. Otherwise, you should sign your ratings with
             that wallet address later<br/>
             - You can rate different aspects of the project from 0 to 100. If you don&apos;t want to rate on a category,
-            press "No idea".
+            press "No idea".<br/>
+            - You can&apos;t view your ratings until the voting deadline. (They are encrypted on chain with <a
+            className="link" target="_blank" href="https://linktr.ee/thresholdaccesscontrol" rel="noreferrer">Threshold
+            Access Control</a>. If you want to edit your ratings, submit a new rating and your previous one will be
+            ignored.
           </p>
         </div>
         <ProjectRatingForm/>

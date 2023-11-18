@@ -46,7 +46,7 @@ root.render(
     <BrowserRouter>
       <WagmiConfig config={wagmiConfig}>
         <RainbowKitProvider
-          theme={darkTheme()}
+          theme={darkTheme({accentColor: '#2563EB'})}
           chains={chains}
         >
           <App/>

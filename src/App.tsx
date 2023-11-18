@@ -2,16 +2,17 @@ import React, {useEffect, useState} from "react";
 import Project from 'pages/project/_id';
 import Home from 'pages';
 import {Route, Routes} from 'react-router-dom';
+import {submissionDeadline, votingStart} from "constants/index";
 
 function Countdown({targetTimestamp}: { targetTimestamp: number }) {
   const calculateTimeLeft = () => {
-    const difference = Math.max(targetTimestamp - +new Date(), 0);
+    const difference = Math.max(targetTimestamp - (+new Date() / 1000), 0);
     let timeLeft = {hours: "00", minutes: "00", seconds: "00"};
 
     let updatedTime = {
-      hours: Math.floor((difference / (1000 * 60 * 60))),
-      minutes: Math.floor((difference / 1000 / 60) % 60),
-      seconds: Math.floor((difference / 1000) % 60),
+      hours: Math.floor(difference / 3600),
+      minutes: Math.floor((difference / 60) % 60),
+      seconds: Math.floor(difference % 60),
     };
 
     for (let interval in updatedTime) {
@@ -54,9 +55,9 @@ function App() {
     <div className="flex flex-col min-h-screen">
       <header className="flex justify-between items-center flex-col sm:flex-row p-4 bg-gray-800 text-white">
         <div className="text-center sm:text-left mb-2 sm:mb-0">Submission Deadline in: <Countdown
-          targetTimestamp={1700399272000}/></div>
+          targetTimestamp={submissionDeadline}/></div>
         <div className="text-center sm:text-left">Voting Starts in: <Countdown
-          targetTimestamp={1700399272000}/></div>
+          targetTimestamp={votingStart}/></div>
       </header>
       <main className="flex-grow">
         <Routes>
