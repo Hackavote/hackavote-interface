@@ -3,6 +3,8 @@ import {useProjectsContext} from "contexts/ProjectsContext";
 import useProjectDetails from "hooks/useProjectDetails";
 import Spinner from "components/Spinner";
 import {Link} from "react-router-dom";
+import {useMemo} from "react";
+import {shuffleArray} from "utils";
 
 const ProjectCard = ({project}: {
   project: HackathonProject
@@ -27,9 +29,10 @@ const ProjectCard = ({project}: {
 
 const Home = () => {
   const {projects} = useProjectsContext()
+  const projectsShuffled = useMemo(() => projects ? shuffleArray(projects) : undefined, [projects]);
   return (
     <div className="flex flex-wrap">
-      {projects?.map((project) => <ProjectCard project={project} key={project.index}/>)}
+      {projectsShuffled?.map((project) => <ProjectCard project={project} key={project.index}/>)}
     </div>
   );
 };
