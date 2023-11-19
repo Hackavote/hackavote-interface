@@ -33,8 +33,8 @@ const RatingSlider = ({
                         isChecked,
                         setIsChecked
                       }: RatingSliderParams) => (
-  <div className="flex items-center mb-4">
-    <label className="mr-2 w-28" htmlFor={setName}>
+  <div className="flex items-center justify-center mb-4 flex-wrap">
+    <label className="mb-2 sm:mb-0 sm:mr-2 w-full text-center sm:w-28 sm:text-left" htmlFor={setName}>
       {setName}:
     </label>
     <Slider
@@ -68,18 +68,20 @@ const RatingSlider = ({
       disabled={isChecked}
       onChange={(e) => setValue(Number(e.target.value))}
     />
-    <input
-      type="checkbox"
-      id={`${setName}-no-idea`}
-      checked={isChecked}
-      className="ml-2"
-      onChange={() => {
-        setIsChecked(!isChecked);
-      }}
-    />
-    <label className="pl-1.5 whitespace-nowrap" htmlFor={`${setName}-no-idea`}>
-      No idea
-    </label>
+    <div>
+      <input
+        type="checkbox"
+        id={`${setName}-no-idea`}
+        checked={isChecked}
+        className="ml-2"
+        onChange={() => {
+          setIsChecked(!isChecked);
+        }}
+      />
+      <label className="pl-1.5 whitespace-nowrap" htmlFor={`${setName}-no-idea`}>
+        No idea
+      </label>
+    </div>
   </div>
 );
 
