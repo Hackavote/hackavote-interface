@@ -134,7 +134,7 @@ const Project = () => {
       </div>
       <div className="flex justify-around flex-wrap">
         <div className="project-meta">
-          <p className="project-meta-title">Eth Global submission</p>
+          <p className="project-meta-title">View on ETHGlobal</p>
           <a href={project.submissionInfoSlug}
              className="project-meta-value">{project.submissionInfoSlug}</a>
         </div>
