@@ -184,7 +184,7 @@ const Project = () => {
           {projectInfo.shortDescription}
         </p>
         <div className="flex flex-wrap justify-center">
-          <a href={project.submissionInfoSlug}
+          <a href={'https://ethglobal.com/showcase/' + project.submissionInfoSlug}
              target="_blank"
              className="btn-primary mx-2 m-1" rel="noreferrer">View on ETHGlobal</a>
           <a href={projectInfo.sourceCode}
@@ -202,7 +202,8 @@ const Project = () => {
           {project.socialMediaUrl ?
             <a href={project.socialMediaUrl}
                target="_blank"
-               className="project-meta-value text-indigo-600 underline hover:text-indigo-800 transition duration-200" rel="noreferrer">{project.socialMediaUrl}</a>
+               className="project-meta-value text-indigo-600 underline hover:text-indigo-800 transition duration-200"
+               rel="noreferrer">{project.socialMediaUrl}</a>
             : <p className="project-meta-value text-gray-500">Not provided yet</p>}
         </div>
         <div className="project-meta">
