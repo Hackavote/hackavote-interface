@@ -130,8 +130,12 @@ export function ProjectRatingForm({projectSlug}: { projectSlug: string }) {
   const {encryptDataForTime} = useTaco()
   const hackavoteContractAddress = useContractAddress(HACKAVOTE_CONTRACT_ADDRESS_MAP)
   const [txState, setTxState] = useState(TransactionState.INITIAL)
+
+  const {votingStartDifference, votingDeadlineDifference} = useDeadlines()
+  const disabled = votingStartDifference > 0 || votingDeadlineDifference === 0
+
   const submitVote = useCallback(async () => {
-    if (txState !== TransactionState.INITIAL) return
+    if (disabled || txState !== TransactionState.INITIAL) return
     try {
       setTxState(TransactionState.PREPARING_TRANSACTION)
       const encryptedData = await encryptDataForTime(opinion, IS_DEV ? Math.floor(+new Date() / 1000) + 30 : votingDeadline)
@@ -155,10 +159,8 @@ export function ProjectRatingForm({projectSlug}: { projectSlug: string }) {
       alert("Error: " + String(e))
     }
     setTxState(TransactionState.INITIAL)
-  }, [encryptDataForTime, hackavoteContractAddress, opinion, txState]);
+  }, [disabled, encryptDataForTime, hackavoteContractAddress, opinion, txState]);
 
-  const {votingStartDifference, votingDeadlineDifference} = useDeadlines()
-  const disabled = votingStartDifference > 0 || votingDeadlineDifference === 0
   return (
     <div className="project-page-section">
       <h3 className="project-page-section-title">Your Vote</h3>
