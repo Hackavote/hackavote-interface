@@ -1,13 +1,19 @@
 import {useParams} from "react-router-dom";
 import useHackavoteProject from "hooks/useHackavoteProject";
 import Spinner from "components/Spinner";
-import {AddressZero} from "constants/index";
+import {AddressZero, votingDeadline} from "constants/index";
 import {copyToClipboard} from "utils/copyToClipboard";
-import {Dispatch, SetStateAction, useState} from 'react';
+import {Dispatch, SetStateAction, useCallback, useMemo, useState} from 'react';
 import Slider from 'react-input-slider';
 import useProjectDetails from "hooks/useProjectDetails";
 import {useAccount} from "wagmi";
 import {ConnectButton} from "@rainbow-me/rainbowkit";
+import useTaco from "hooks/useTaco";
+import {prepareWriteContract, waitForTransaction, writeContract} from '@wagmi/core';
+import {useContractAddress} from "hooks/useContractAddress";
+import {HACKAVOTE_CONTRACT_ADDRESS_MAP} from "constants/addresses";
+import {hackavoteABI} from "abis/types/generated";
+import {toHexString} from "@nucypher/taco";
 
 type RatingSliderParams = {
   setName: string,
@@ -74,7 +80,7 @@ const RatingSlider = ({
   </div>
 );
 
-export function ProjectRatingForm() {
+export function ProjectRatingForm({projectSlug}: { projectSlug: string }) {
   const [technicality, setTechnicality] = useState<number>(50);
   const [originality, setOriginality] = useState<number>(50);
   const [practicality, setPracticality] = useState<number>(50);
@@ -107,16 +113,46 @@ export function ProjectRatingForm() {
 
   const {address} = useAccount()
 
+  const opinion = useMemo(() => {
+    const technicalityOpinion = techChecked ? '' : technicality
+    const originalityOpinion = oriChecked ? '' : originality
+    const practicalityOpinion = practChecked ? '' : practicality
+    const usabilityOpinion = usaChecked ? '' : usability
+    const wowFactorOpinion = wowChecked ? '' : wowFactor
+    return `${projectSlug},${technicalityOpinion},${originalityOpinion},${practicalityOpinion},${usabilityOpinion},${wowFactorOpinion}`
+  }, [oriChecked, originality, practChecked, practicality, projectSlug, techChecked, technicality, usaChecked, usability, wowChecked, wowFactor]);
+
+  const {encryptDataForTime} = useTaco()
+  const hackavoteContractAddress = useContractAddress(HACKAVOTE_CONTRACT_ADDRESS_MAP)
+
+  const submitVote = useCallback(async () => {
+    const encryptedData = await encryptDataForTime(opinion, votingDeadline)
+    if (encryptedData) {
+      const {request} = await prepareWriteContract({
+        address: hackavoteContractAddress,
+        abi: hackavoteABI,
+        functionName: 'submitOpinion',
+        args: [toHexString(encryptedData.toBytes()) as `0x${string}`]
+      })
+      const {hash} = await writeContract(request);
+      await waitForTransaction({
+        hash,
+      });
+      alert('Vote submitted successfully!');
+    }
+  }, [encryptDataForTime, hackavoteContractAddress, opinion]);
+
   return (
-    <form className="project-page-section">
+    <div className="project-page-section">
       <h3 className="project-page-section-title">Your Vote</h3>
       <div className="flex flex-col w-full justify-center items-center">
         {ratings.map((rating) => <RatingSlider {...rating} />)}
-        {address ? <button className="btn-primary mt-4" type="submit">
+        {address ? <button onClick={submitVote} className="btn-primary mt-4" type="submit">
           Submit
         </button> : <ConnectButton/>}
+        {opinion}
       </div>
-    </form>
+    </div>
   );
 }
 
@@ -204,7 +240,7 @@ const Project = () => {
             ignored.
           </p>
         </div>
-        <ProjectRatingForm/>
+        <ProjectRatingForm projectSlug={project.submissionInfoSlug}/>
       </div>
     </div>
   ) : <Spinner/>;
