@@ -10,7 +10,6 @@ function Taco() {
     '',
   );
 
-
   const [encryptedText, setEncryptedText] = useState<string | null>(null)
 
   const {isInit, encryptDataForTime, decryptData} = useTaco()
@@ -23,6 +22,22 @@ function Taco() {
       setEncryptedText(toHexString(messageKit.toBytes()))
     }
   };
+
+  // const hackavoteContractAddress = useContractAddress(HACKAVOTE_CONTRACT_ADDRESS_MAP)
+  // const {data: opinions} = useHackavoteGetOpinionsOfHacker({
+  //   address: hackavoteContractAddress,
+  //   args: ['0x7f96cE96b4E7e1F8AcCDFFFF1919513599a15B6E']
+  // })
+  //
+  // useEffect(() => {
+  //   if (opinions?.[0]) {
+  //     decryptData(fromHexString(opinions[0])).then(data => {
+  //       if (data) {
+  //         setDecryptedMessage(fromBytes(data))
+  //       }
+  //     }).catch(e => alert(String(e)))
+  //   }
+  // }, [decryptData, opinions]);
 
   if (!isInit) {
     return <div>Loading...</div>;

@@ -14,7 +14,8 @@ import {useContractAddress} from "hooks/useContractAddress";
 import {HACKAVOTE_CONTRACT_ADDRESS_MAP} from "constants/addresses";
 import {hackavoteABI} from "abis/types/generated";
 import {toHexString} from "@nucypher/taco";
-import * as process from "process";
+import {TransactionState} from "types";
+import {IS_DEV} from "utils/env";
 
 type RatingSliderParams = {
   setName: string,
@@ -125,25 +126,33 @@ export function ProjectRatingForm({projectSlug}: { projectSlug: string }) {
 
   const {encryptDataForTime} = useTaco()
   const hackavoteContractAddress = useContractAddress(HACKAVOTE_CONTRACT_ADDRESS_MAP)
-
+  const [txState, setTxState] = useState(TransactionState.INITIAL)
   const submitVote = useCallback(async () => {
-    const encryptedData = await encryptDataForTime(opinion, process.env.NODE_ENV === 'development' ? Math.floor(+new Date() / 1000) + 30 : votingDeadline)
-    if (encryptedData) {
-      const data: `0x${string}` = `0x${toHexString(encryptedData.toBytes())}`
-      console.log({data})
-      const {request} = await prepareWriteContract({
-        address: hackavoteContractAddress,
-        abi: hackavoteABI,
-        functionName: 'submitOpinion',
-        args: [data]
-      })
-      const {hash} = await writeContract(request);
-      await waitForTransaction({
-        hash,
-      });
-      alert('Vote submitted successfully!');
+    if (txState !== TransactionState.INITIAL) return
+    try {
+      setTxState(TransactionState.PREPARING_TRANSACTION)
+      const encryptedData = await encryptDataForTime(opinion, IS_DEV ? Math.floor(+new Date() / 1000) + 30 : votingDeadline)
+      if (encryptedData) {
+        const data: `0x${string}` = `0x${toHexString(encryptedData.toBytes())}`
+        const {request} = await prepareWriteContract({
+          address: hackavoteContractAddress,
+          abi: hackavoteABI,
+          functionName: 'submitOpinion',
+          args: [data]
+        })
+        setTxState(TransactionState.AWAITING_USER_APPROVAL)
+        const {hash} = await writeContract(request);
+        setTxState(TransactionState.AWAITING_TRANSACTION)
+        await waitForTransaction({
+          hash,
+        });
+        alert('Vote submitted successfully!');
+      }
+    } catch (e) {
+      alert("Error: " + String(e))
     }
-  }, [encryptDataForTime, hackavoteContractAddress, opinion]);
+    setTxState(TransactionState.INITIAL)
+  }, [encryptDataForTime, hackavoteContractAddress, opinion, txState]);
 
   return (
     <div className="project-page-section">
@@ -151,9 +160,8 @@ export function ProjectRatingForm({projectSlug}: { projectSlug: string }) {
       <div className="flex flex-col w-full justify-center items-center">
         {ratings.map((rating) => <RatingSlider {...rating} />)}
         {address ? <button onClick={submitVote} className="btn-primary mt-4" type="submit">
-          Submit
+          {txState === TransactionState.AWAITING_TRANSACTION ? 'Waiting for transaction...' : txState === TransactionState.AWAITING_USER_APPROVAL ? 'Waiting for user approval' : txState === TransactionState.PREPARING_TRANSACTION ? 'Loading' : 'Submit'}
         </button> : <ConnectButton/>}
-        {opinion}
       </div>
     </div>
   );

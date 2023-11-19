@@ -37,14 +37,19 @@
         "internalType": "address",
         "name": "hackerAddress",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
       }
     ],
-    "name": "getOpinionsOfHacker",
+    "name": "getOpinionOfHackerAtIndex",
     "outputs": [
       {
-        "internalType": "bytes[]",
+        "internalType": "bytes",
         "name": "",
-        "type": "bytes[]"
+        "type": "bytes"
       }
     ],
     "stateMutability": "view",
