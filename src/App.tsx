@@ -3,6 +3,7 @@ import Project from 'pages/project/_id';
 import Home from 'pages';
 import {Route, Routes} from 'react-router-dom';
 import useDeadlines from "hooks/useDeadlines";
+import Taco from "pages/taco";
 
 function Countdown({difference}: { difference: number }) {
   const timeLeft = useMemo(() => {
@@ -63,6 +64,7 @@ function App() {
         <Header/>
         <Routes>
           <Route path='/' element={<Home/>}/>
+          <Route path='/taco' element={<Taco/>}/>
           <Route path='/p/:projectSlug' element={<Project/>}/>
         </Routes>
       </main>
