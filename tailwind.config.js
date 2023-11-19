@@ -10,7 +10,7 @@ module.exports = {
                 'sans': ['Roboto', 'sans-serif'],
             },
             colors: {
-                'background-color': '#212121',
+                'background-color': '#151515',
                 'font-color': '#EAEAEA',
             },
             flexGrow: {

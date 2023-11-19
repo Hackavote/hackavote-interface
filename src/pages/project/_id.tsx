@@ -16,6 +16,7 @@ import {hackavoteABI} from "abis/types/generated";
 import {toHexString} from "@nucypher/taco";
 import {TransactionState} from "types";
 import {IS_DEV} from "utils/env";
+import useDeadlines from "hooks/useDeadlines";
 
 type RatingSliderParams = {
   setName: string,
@@ -154,14 +155,18 @@ export function ProjectRatingForm({projectSlug}: { projectSlug: string }) {
     setTxState(TransactionState.INITIAL)
   }, [encryptDataForTime, hackavoteContractAddress, opinion, txState]);
 
+  const {votingStartDifference, votingDeadlineDifference} = useDeadlines()
+  const disabled = votingStartDifference > 0 || votingDeadlineDifference === 0
   return (
     <div className="project-page-section">
       <h3 className="project-page-section-title">Your Vote</h3>
       <div className="flex flex-col w-full justify-center items-center">
         {ratings.map((rating) => <RatingSlider {...rating} />)}
-        {address ? <button onClick={submitVote} className="btn-primary mt-4" type="submit">
-          {txState === TransactionState.AWAITING_TRANSACTION ? 'Waiting for transaction...' : txState === TransactionState.AWAITING_USER_APPROVAL ? 'Waiting for user approval' : txState === TransactionState.PREPARING_TRANSACTION ? 'Loading' : 'Submit'}
-        </button> : <ConnectButton/>}
+        {address ?
+          <button onClick={submitVote} className={`btn-primary mt-4 ${disabled ? 'cursor-not-allowed opacity-70' : ''}`}
+                  type="submit">
+            {votingDeadlineDifference === 0 ? 'Voting Ended' : votingStartDifference > 0 ? 'Not Started Yet' : txState === TransactionState.AWAITING_TRANSACTION ? 'Waiting for transaction...' : txState === TransactionState.AWAITING_USER_APPROVAL ? 'Waiting for user approval' : txState === TransactionState.PREPARING_TRANSACTION ? 'Loading' : 'Submit'}
+          </button> : <ConnectButton/>}
       </div>
     </div>
   );
@@ -172,34 +177,33 @@ const Project = () => {
   const {project} = useHackavoteProject(projectSlug)
   const {projectInfo} = useProjectDetails(project?.submissionInfoSlug)
   return (project && projectInfo) ? (
-    <div className="p-10">
+    <div className="p-10 max-w-[1200px] mx-auto">
       <div className="w-full">
         <p className="text-center font-bold text-3xl">{projectInfo.title || 'Unknown Project'}</p>
         <p className="py-2 text-center">
           {projectInfo.shortDescription}
         </p>
-      </div>
-      <div className="flex justify-around flex-wrap">
-        <div className="project-meta">
-          <p className="project-meta-title">View on ETHGlobal</p>
+        <div className="flex flex-wrap justify-center">
           <a href={project.submissionInfoSlug}
-             className="project-meta-value">{project.submissionInfoSlug}</a>
-        </div>
-        <div className="project-meta">
-          <p className="project-meta-title">Source Code</p>
+             target="_blank"
+             className="btn-primary mx-2 m-1" rel="noreferrer">View on ETHGlobal</a>
           <a href={projectInfo.sourceCode}
-             className="project-meta-value">{projectInfo.sourceCode}</a>
+             target="_blank"
+             className="btn-primary mx-2 m-1" rel="noreferrer">Source Code</a>
+          {projectInfo.liveDemo &&
+              <a href={projectInfo.liveDemo}
+                 target="_blank"
+                 className="btn-primary mx-2 m-1" rel="noreferrer">Live Demo</a>}
         </div>
-        {projectInfo.liveDemo && <div className="project-meta">
-            <p className="project-meta-title">Live Demo</p>
-            <a href={projectInfo.liveDemo}
-               className="project-meta-value">{projectInfo.liveDemo}</a>
-        </div>}
-        <div className="project-meta">
-          <p className="project-meta-title">Contact and Social Media</p>
+      </div>
+      <div className="flex justify-center flex-wrap">
+        <div className="project-meta bg-white shadow-lg rounded-lg p-4">
+          <h2 className="project-meta-title text-xl font-bold text-indigo-900 mb-2">Contact and Social Media</h2>
           {project.socialMediaUrl ?
-            <a href={project.socialMediaUrl} className="project-meta-value">{project.socialMediaUrl}</a> : <p
-              className="project-meta-value">Not provided yet</p>}
+            <a href={project.socialMediaUrl}
+               target="_blank"
+               className="project-meta-value text-indigo-600 underline hover:text-indigo-800 transition duration-200" rel="noreferrer">{project.socialMediaUrl}</a>
+            : <p className="project-meta-value text-gray-500">Not provided yet</p>}
         </div>
         <div className="project-meta">
           <p className="project-meta-title">Donation Address</p>
@@ -255,7 +259,7 @@ const Project = () => {
         <ProjectRatingForm projectSlug={project.submissionInfoSlug}/>
       </div>
     </div>
-  ) : <Spinner/>;
+  ) : <Spinner className="mt-20"/>;
 };
 
 export default Project; /* Rectangle 18 */

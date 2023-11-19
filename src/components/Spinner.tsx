@@ -1,6 +1,6 @@
-const Spinner = () => {
+const Spinner = ({className}: { className?: string }) => {
   return (
-    <div className="flex justify-center items-center mt-20">
+    <div className={`flex justify-center items-center ${className || ''}`}>
       <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
     </div>
   );
