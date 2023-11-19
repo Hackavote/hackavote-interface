@@ -197,8 +197,9 @@ const Project = () => {
         </div>}
         <div className="project-meta">
           <p className="project-meta-title">Contact and Social Media</p>
-          {project.socialMediaUrl ? <a className="project-meta-value">{project.socialMediaUrl}</a> : <p
-            className="project-meta-value">Not provided yet</p>}
+          {project.socialMediaUrl ?
+            <a href={project.socialMediaUrl} className="project-meta-value">{project.socialMediaUrl}</a> : <p
+              className="project-meta-value">Not provided yet</p>}
         </div>
         <div className="project-meta">
           <p className="project-meta-title">Donation Address</p>
