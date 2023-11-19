@@ -98,11 +98,11 @@
       {
         "indexed": false,
         "internalType": "string",
-        "name": "newSubmissionInfoUrl",
+        "name": "newSubmissionInfoSlug",
         "type": "string"
       }
     ],
-    "name": "SubmissionInfoUrlChanged",
+    "name": "SubmissionInfoSlugChanged",
     "type": "event"
   },
   {
@@ -150,11 +150,11 @@
       },
       {
         "internalType": "string",
-        "name": "_newSubmissionInfoUrl",
+        "name": "_newSubmissionInfoSlug",
         "type": "string"
       }
     ],
-    "name": "changeSubmissionInfoUrl",
+    "name": "changeSubmissionInfoSlug",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -207,7 +207,7 @@
       },
       {
         "internalType": "string",
-        "name": "submissionInfoUrl",
+        "name": "submissionInfoSlug",
         "type": "string"
       },
       {
@@ -223,7 +223,7 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "_submissionInfoUrl",
+        "name": "_submissionInfoSlug",
         "type": "string"
       },
       {

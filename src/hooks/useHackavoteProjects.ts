@@ -31,7 +31,7 @@ export default function useHackavoteProjects() {
           index,
           author: projectData[0],
           donationAddress: projectData[1],
-          submissionInfoUrl: projectData[2],
+          submissionInfoSlug: projectData[2],
           socialMediaUrl: projectData[3]
         }))
       )

@@ -14,6 +14,7 @@ import {publicProvider} from 'wagmi/providers/public';
 
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {ProjectsContextProvider} from "contexts/ProjectsContext";
 
 if (!process.env.REACT_APP_WALLETCONNECT_PROJECT_ID) {
   throw new Error('REACT_APP_WALLETCONNECT_PROJECT_ID not provided');
@@ -49,7 +50,9 @@ root.render(
           theme={darkTheme({accentColor: '#2563EB'})}
           chains={chains}
         >
-          <App/>
+          <ProjectsContextProvider>
+            <App/>
+          </ProjectsContextProvider>
         </RainbowKitProvider>
       </WagmiConfig>
     </BrowserRouter>

@@ -10,14 +10,14 @@ export type ProjectInfo = {
   description: string | undefined;
   howItsMade: string | undefined;
 }
-export default function useProjectDetails(submissionInfoUrl: string | undefined) {
+export default function useProjectDetails(submissionInfoSlug: string | undefined) {
   const [projectInfo, setProjectInfo] = useState<ProjectInfo | undefined>(undefined)
 
   useEffect(() => {
     async function getData() {
-      if (submissionInfoUrl) {
+      if (submissionInfoSlug) {
         try {
-          const response = await axios.get(submissionInfoUrl.replace('https://ethglobal.com/', '/ethglobal/'))
+          const response = await axios.get('/ethglobal/showcase/' + submissionInfoSlug)
           const dom = parse(response.data)
           const title = dom.querySelector("header h1.text-4xl.max-w-2xl.mb-4")?.innerText
           const shortDescription = dom.querySelector("header p.text-black-500.clamp-3")?.innerText
@@ -47,7 +47,7 @@ export default function useProjectDetails(submissionInfoUrl: string | undefined)
     }
 
     getData()
-  }, [submissionInfoUrl]);
+  }, [submissionInfoSlug]);
 
   return {
     projectInfo

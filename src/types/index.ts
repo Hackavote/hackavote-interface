@@ -7,7 +7,7 @@ export type AddressMap = {
 export type HackathonProject = {
   index: number;
   author: Address;
-  submissionInfoUrl: string;
+  submissionInfoSlug: string;
   socialMediaUrl: string;
   donationAddress: Address;
 }

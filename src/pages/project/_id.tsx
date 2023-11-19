@@ -121,9 +121,9 @@ export function ProjectRatingForm() {
 }
 
 const Project = () => {
-  const {projectId} = useParams()
-  const {project} = useHackavoteProject(projectId)
-  const {projectInfo} = useProjectDetails(project?.submissionInfoUrl)
+  const {projectSlug} = useParams()
+  const {project} = useHackavoteProject(projectSlug)
+  const {projectInfo} = useProjectDetails(project?.submissionInfoSlug)
   return (project && projectInfo) ? (
     <div className="p-10">
       <div className="w-full">
@@ -135,8 +135,8 @@ const Project = () => {
       <div className="flex justify-around flex-wrap">
         <div className="project-meta">
           <p className="project-meta-title">Eth Global submission</p>
-          <a href={project.submissionInfoUrl}
-             className="project-meta-value">{project.submissionInfoUrl}</a>
+          <a href={project.submissionInfoSlug}
+             className="project-meta-value">{project.submissionInfoSlug}</a>
         </div>
         <div className="project-meta">
           <p className="project-meta-title">Source Code</p>
