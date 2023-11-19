@@ -14,6 +14,7 @@ import {useContractAddress} from "hooks/useContractAddress";
 import {HACKAVOTE_CONTRACT_ADDRESS_MAP} from "constants/addresses";
 import {hackavoteABI} from "abis/types/generated";
 import {toHexString} from "@nucypher/taco";
+import * as process from "process";
 
 type RatingSliderParams = {
   setName: string,
@@ -126,13 +127,15 @@ export function ProjectRatingForm({projectSlug}: { projectSlug: string }) {
   const hackavoteContractAddress = useContractAddress(HACKAVOTE_CONTRACT_ADDRESS_MAP)
 
   const submitVote = useCallback(async () => {
-    const encryptedData = await encryptDataForTime(opinion, votingDeadline)
+    const encryptedData = await encryptDataForTime(opinion, process.env.NODE_ENV === 'development' ? Math.floor(+new Date() / 1000) + 30 : votingDeadline)
     if (encryptedData) {
+      const data: `0x${string}` = `0x${toHexString(encryptedData.toBytes())}`
+      console.log({data})
       const {request} = await prepareWriteContract({
         address: hackavoteContractAddress,
         abi: hackavoteABI,
         functionName: 'submitOpinion',
-        args: [toHexString(encryptedData.toBytes()) as `0x${string}`]
+        args: [data]
       })
       const {hash} = await writeContract(request);
       await waitForTransaction({
