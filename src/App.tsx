@@ -1,12 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useMemo} from "react";
 import Project from 'pages/project/_id';
 import Home from 'pages';
 import {Route, Routes} from 'react-router-dom';
-import {submissionDeadline, votingStart} from "constants/index";
+import useDeadlines from "hooks/useDeadlines";
 
-function Countdown({targetTimestamp}: { targetTimestamp: number }) {
-  const calculateTimeLeft = () => {
-    const difference = Math.max(targetTimestamp - (+new Date() / 1000), 0);
+function Countdown({difference}: { difference: number }) {
+  const timeLeft = useMemo(() => {
     let timeLeft = {hours: "00", minutes: "00", seconds: "00"};
 
     let updatedTime = {
@@ -24,42 +23,44 @@ function Countdown({targetTimestamp}: { targetTimestamp: number }) {
     }
 
     return timeLeft;
-  };
-
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-
-      if (
-        timeLeft.hours === "00" &&
-        timeLeft.minutes === "00" &&
-        timeLeft.seconds === "00"
-      ) {
-        clearInterval(timer);
-      }
-    }, 1000);
-
-    // Clear interval if the component is unmounted
-    return () => clearInterval(timer);
-  }, [calculateTimeLeft, timeLeft.hours, timeLeft.minutes, timeLeft.seconds]);
-
+  }, [difference]);
   return (
-    <>{timeLeft.hours}:{timeLeft.minutes}:{timeLeft.seconds}</>
+    <span className="ml-1 bg-blue-600 text-white font-semibold py-1 px-3 rounded">
+      {timeLeft.hours}:{timeLeft.minutes}:{timeLeft.seconds}
+    </span>
   );
+}
+
+function Header() {
+  const {
+    submissionDeadlineDifference,
+    votingStartDifference,
+    votingDeadlineDifference
+  } = useDeadlines()
+  return <header className="flex justify-between items-center flex-col sm:flex-row p-4 bg-gray-800 text-white">
+    {
+      votingStartDifference > 0 ? <>
+          <div className="text-center sm:text-left mb-4 sm:mb-0">Submission Deadline in: <Countdown
+            difference={submissionDeadlineDifference}/></div>
+          <div className="text-center sm:text-left">Voting Starts in: <Countdown
+            difference={votingStartDifference}/></div>
+        </> :
+        submissionDeadlineDifference > 0 ? <>
+          <div className="text-center sm:text-left mb-4 sm:mb-0">Submission Deadline in: <Countdown
+            difference={submissionDeadlineDifference}/></div>
+          <div className="text-center sm:text-left">Voting Ends in: <Countdown
+            difference={votingDeadlineDifference}/></div>
+        </> : votingDeadlineDifference > 0 ? <div className="text-center sm:text-left">Voting Ends in: <Countdown
+          difference={votingDeadlineDifference}/></div> : <div className="text-center sm:text-left">Voting Ended!</div>
+    }
+  </header>
 }
 
 function App() {
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="flex justify-between items-center flex-col sm:flex-row p-4 bg-gray-800 text-white">
-        <div className="text-center sm:text-left mb-2 sm:mb-0">Submission Deadline in: <Countdown
-          targetTimestamp={submissionDeadline}/></div>
-        <div className="text-center sm:text-left">Voting Starts in: <Countdown
-          targetTimestamp={votingStart}/></div>
-      </header>
       <main className="flex-grow">
+        <Header/>
         <Routes>
           <Route path='/' element={<Home/>}/>
           <Route path='/p/:projectSlug' element={<Project/>}/>
