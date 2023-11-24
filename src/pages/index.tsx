@@ -17,7 +17,7 @@ const ProjectCard = ({project}: {
           <img className="rounded-t-xl h-3/4 w-full object-cover" alt="project"
                src='/img/project-image-placeholder.png'/>
           <p className="text-2xl font-bold my-2">{projectInfo.title}</p>
-          <p className="text-font-color text-sm h-20 w-full">{projectInfo.shortDescription}</p>
+          <p className="text-font-color text-sm h-20 w-full truncate-multiline mb-3">{projectInfo.shortDescription}</p>
           <button className="btn-primary">
             View Details
           </button>
