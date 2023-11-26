@@ -12,7 +12,7 @@ function Taco() {
 
   const [encryptedText, setEncryptedText] = useState<string | null>(null)
 
-  const {isInit, encryptDataForTime, decryptData} = useTaco()
+  const {isInit, encryptDataForTime, decryptDataToBytes} = useTaco()
   const runExample = async () => {
     if (!isInit) return
     setEncryptedText(null)
@@ -31,13 +31,13 @@ function Taco() {
   //
   // useEffect(() => {
   //   if (opinions?.[0]) {
-  //     decryptData(fromHexString(opinions[0])).then(data => {
+  //     decryptDataToBytes(fromHexString(opinions[0])).then(data => {
   //       if (data) {
   //         setDecryptedMessage(fromBytes(data))
   //       }
   //     }).catch(e => alert(String(e)))
   //   }
-  // }, [decryptData, opinions]);
+  // }, [decryptDataToBytes, opinions]);
 
   if (!isInit) {
     return <div>Loading...</div>;
@@ -50,7 +50,7 @@ function Taco() {
       <button onClick={runExample}>Run example</button>
       <br/>
       {encryptedText && <button
-          onClick={() => decryptData(fromHexString(encryptedText)).then(data => {
+          onClick={() => decryptDataToBytes(fromHexString(encryptedText)).then(data => {
             if (data) {
               setDecryptedMessage(fromBytes(data))
             }

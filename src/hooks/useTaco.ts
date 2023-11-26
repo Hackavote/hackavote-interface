@@ -1,4 +1,13 @@
-import {conditions, decrypt, domains, encrypt, getPorterUri, initialize, ThresholdMessageKit} from "@nucypher/taco";
+import {
+  conditions,
+  decrypt,
+  domains,
+  encrypt,
+  fromBytes,
+  getPorterUri,
+  initialize,
+  ThresholdMessageKit
+} from "@nucypher/taco";
 import {useCallback, useEffect, useState} from "react";
 import {ethers} from "ethers";
 
@@ -17,7 +26,7 @@ export default function useTaco() {
     initialize().then(() => setIsInit(true));
   }, []);
 
-  const decryptData = useCallback(async (encryptedBytes: Uint8Array) => {
+  const decryptDataToBytes = useCallback(async (encryptedBytes: Uint8Array) => {
     if (!isInit) return;
     const messageKit = ThresholdMessageKit.fromBytes(encryptedBytes);
     return decrypt(
@@ -27,6 +36,14 @@ export default function useTaco() {
       getPorterUri(domain)
     );
   }, [isInit]);
+
+  const decryptData = useCallback(async (encryptedBytes: Uint8Array) => {
+    const decrypted = await decryptDataToBytes(encryptedBytes)
+    if (decrypted) {
+      return fromBytes(decrypted)
+    }
+    return undefined
+  }, [decryptDataToBytes]);
 
   const encryptDataForTime = useCallback((message: string, timestamp: number) => {
     if (!isInit) return;
@@ -53,6 +70,7 @@ export default function useTaco() {
   return {
     isInit,
     decryptData,
+    decryptDataToBytes,
     encryptDataForTime
   }
 }
